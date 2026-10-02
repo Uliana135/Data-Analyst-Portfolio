@@ -1,0 +1,9 @@
+# корректировка заголовков
+df.columns = [col.strip().lower().replace(' ', '_') for col in df.columns]
+
+# работа с типом данных
+print(df.dtypes)
+df.dtypes.value_counts()
+
+# Меняем типы, а всё что не похоже на даты, помечаем как NaT
+df['year'] = pd.to_datetime(df['year'], errors='coerce')
