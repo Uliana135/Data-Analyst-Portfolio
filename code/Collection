@@ -1,0 +1,25 @@
+# Collection of additional information about organizations
+headers = {
+    'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36'
+}
+
+def get_injust_info(inn):
+    url = f'https://injust.pro/proverka/{inn}'
+    try:
+        r = requests.get(url, headers=headers, timeout=30)
+        if r.status_code != 200:
+            return None
+        soup = BeautifulSoup(r.text, 'html.parser')
+        h1 = soup.find('h1')
+        text = soup.get_text()
+
+        # Извлекаем юридический адрес
+        address_match = re.search(r'Юридический адрес:\s*(.+?)(?=\n|Наличие лицензий|ОПИСАНИЕ|$)', text)
+        address = address_match.group(1).strip() if address_match else None
+
+        # Извлекаем регион из адреса
+        region = None
+        if address:
+            addr_no_index = re.sub(r'^\d{6},\s*', '', address)
+            region_raw = addr_no_index.split(',')[0].strip()
+            region = re.sub(r'^Г\.|^г\.', '', region_raw).strip()
