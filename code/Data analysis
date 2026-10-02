@@ -1,0 +1,21 @@
+# 1. Считаем количество по ОКВЭД
+ocved_counts = df_parsed['okved'].value_counts()
+
+# 2. Топ-10 самых частых
+top10_max = ocved_counts.head(10)
+
+# 3. Топ-10 самых редких (исключаем нули и NaN)
+top10_min = ocved_counts[ocved_counts > 0].tail(10)
+
+# Настройка графиков
+sns.set(style="whitegrid")
+plt.rcParams["figure.figsize"] = (12, 6)
+
+# График 1: топ-10 по максимальному количеству
+plt.figure()
+sns.barplot(x=top10_max.values, y=top10_max.index, palette="viridis")
+plt.title("Топ-10 видов экономической деятельности (по количеству организаций)")
+plt.xlabel("Количество организаций")
+plt.ylabel("ОКВЭД")
+plt.tight_layout()
+plt.show()
