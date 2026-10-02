@@ -1,0 +1,14 @@
+# Считаем рентабельность
+df_profit = df_parsed[df_parsed['income'] > 0].copy()
+df_profit['profitability'] = df_profit['net_profit'] / df_profit['income'] * 100
+print(df_profit[['name', 'okved', 'income', 'net_profit', 'profitability']].head(10))
+print("\nСтатистика рентабельности:")
+print(df_profit['profitability'].describe())
+
+
+
+# Сравниваем группы
+groups = [g['profitability'].values for _, g in df_clean.groupby('sector') if g['sector'].iloc[0] != 'Иные отрасли']
+stat, p = f_oneway(*groups)
+
+print(f'ANOVA: p = {p:.4f}')
