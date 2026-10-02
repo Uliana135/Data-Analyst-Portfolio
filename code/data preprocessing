@@ -7,3 +7,21 @@ df.dtypes.value_counts()
 
 # Меняем типы, а всё что не похоже на даты, помечаем как NaT
 df['year'] = pd.to_datetime(df['year'], errors='coerce')
+
+
+
+# Ищем аномалии
+# Смотрим только по числовым колонкам
+num_df = df.select_dtypes(include=['int64', 'float64'])
+
+# Находим колонки, где есть хоть одно отрицательное значение
+has_neg = (num_df < 0).any()
+neg_cols = has_neg[has_neg].index
+
+if len(neg_cols) == 0:
+    print('Отрицательных значений в числовых колонках нет')
+else:
+    print('Колонки с отрицательными значениями:', list(neg_cols))
+    # Смотрим min/max, чтобы понять масштаб: это убытки или мусор
+    stats = num_df[neg_cols].agg(['min', 'max']).round(2)
+    print(stats)
